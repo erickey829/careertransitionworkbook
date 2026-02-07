@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The First Step - Interactive Workbook</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #F8FAFC;
+            --primary: #1E293B;
+            --accent: #6366F1;
+            --text-muted: #64748B;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--primary);
+            scroll-behavior: smooth;
+        }
+        .serif { font-family: 'Playfair Display', serif; }
+        .page {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 6rem 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+            border-bottom: 1px solid #E2E8F0;
+        }
+        .input-box {
+            width: 100%;
+            background: white;
+            border: 1px solid #E2E8F0;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-top: 0.5rem;
+            margin-bottom: 1.5rem;
+            transition: all 0.2s;
+        }
+        .input-box:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        }
+        .chip {
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .chip.active {
+            background-color: var(--accent);
+            color: white;
+            border-color: var(--accent);
+        }
+        /* Floating Nav Styles */
+        .nav-dock {
+            position: fixed;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(226, 232, 240, 0.8);
+            padding: 0.75rem 1.5rem;
+            border-radius: 9999px;
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+            z-index: 100;
+        }
+        
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {transform: translateY(0);}
+            40% {transform: translateY(-10px);}
+            60% {transform: translateY(-5px);}
+        }
+
+        @media print {
+            .page { border: none; page-break-after: always; }
+            .no-print, .nav-dock { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Progress Bar -->
+    <div class="fixed top-0 left-0 w-full h-1.5 bg-gray-100 z-50">
+        <div id="progress" class="h-full bg-indigo-500 w-0 transition-all duration-300"></div>
+    </div>
+
+    <!-- Floating Navigation Dock -->
+    <nav id="navDock" class="nav-dock no-print opacity-0 transition-opacity duration-500 pointer-events-none">
+        <button onclick="navPrevious()" class="p-2 hover:bg-gray-100 rounded-full transition-colors text-slate-500 hover:text-indigo-600" title="Previous Page">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+        </button>
+        
+        <div class="text-sm font-semibold text-slate-400 tabular-nums">
+            Page <span id="currentPageNum" class="text-indigo-600">1</span> of 10
+        </div>
+
+        <button onclick="navNext()" class="flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-full font-medium hover:bg-indigo-700 transition-all" id="nextBtn">
+            <span>Next</span>
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+        </button>
+    </nav>
+
+    <!-- Page 1: Cover -->
+    <section id="page1" class="page text-center">
+        <div class="mb-8">
+            <svg class="mx-auto w-24 h-24 text-indigo-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
+            </svg>
+        </div>
+        <h1 class="serif text-5xl md:text-7xl mb-6">The First Step</h1>
+        <p class="text-xl md:text-2xl text-slate-500 font-light max-w-lg mx-auto leading-relaxed mb-12">
+            A simple starting point for people who know they don’t want to keep doing what they’re doing — but don’t know what’s next.
+        </p>
+        <div class="flex flex-col items-center">
+            <button onclick="navNext()" class="px-10 py-5 bg-slate-900 text-white rounded-full font-bold text-lg hover:bg-slate-800 transition-all transform hover:scale-105 shadow-xl shadow-slate-200">
+                Begin the Reflection
+            </button>
+        </div>
+    </section>
+
+    <!-- Page 2: Orientation -->
+    <section id="page2" class="page">
+        <h2 class="serif text-4xl mb-8">Orientation</h2>
+        <div class="space-y-6 text-lg text-slate-600 border-l-2 border-indigo-100 pl-8 py-4">
+            <p>Before we start, let’s lower the stakes. To find your next move:</p>
+            <ul class="space-y-4">
+                <li class="flex items-center gap-3">
+                    <span class="w-6 h-6 rounded-full bg-red-50 text-red-500 flex items-center justify-center text-sm">✕</span>
+                    You don’t need a new career yet.
+                </li>
+                <li class="flex items-center gap-3">
+                    <span class="w-6 h-6 rounded-full bg-red-50 text-red-500 flex items-center justify-center text-sm">✕</span>
+                    You don’t need to find your "passion."
+                </li>
+                <li class="flex items-center gap-3">
+                    <span class="w-6 h-6 rounded-full bg-red-50 text-red-500 flex items-center justify-center text-sm">✕</span>
+                    You don’t need to quit your job today.
+                </li>
+            </ul>
+            <div class="mt-12 p-8 bg-indigo-50 rounded-2xl text-indigo-900 italic font-medium">
+                “This workbook won’t give you an answer. It will give you direction.”
+            </div>
+        </div>
+    </section>
+
+    <!-- Page 3: Diagnostic -->
+    <section id="page3" class="page">
+        <h2 class="serif text-4xl mb-4">What’s Actually Draining You?</h2>
+        <p class="text-slate-500 mb-8">Let's isolate the noise. Be honest—nobody is reading this but you.</p>
+        
+        <label class="font-medium">The top 3 things that exhaust me at work:</label>
+        <textarea class="input-box" rows="3" placeholder="1. Meetings that could be emails..."></textarea>
+
+        <label class="font-medium">The part of my job I avoid the most:</label>
+        <input type="text" class="input-box" placeholder="Managing the budget spreadsheets...">
+
+        <label class="font-medium">The sentence I find myself repeating about work:</label>
+        <input type="text" class="input-box" placeholder="&quot;I just need to make it to Friday.&quot;">
+    </section>
+
+    <!-- Page 4: Values -->
+    <section id="page4" class="page">
+        <h2 class="serif text-4xl mb-4">What You Want More Of</h2>
+        <p class="text-slate-500 mb-8">Not a dream life—just a better one. Circle the values that feel non-negotiable for your next chapter.</p>
+        
+        <div class="flex flex-wrap gap-3 mb-8">
+            <button onclick="toggleChip(this)" class="chip border border-slate-200 px-4 py-2 rounded-full text-sm">Autonomy</button>
+            <button onclick="toggleChip(this)" class="chip border border-slate-200 px-4 py-2 rounded-full text-sm">Creativity</button>
+            <button onclick="toggleChip(this)" class="chip border border-slate-200 px-4 py-2 rounded-full text-sm">Stability</button>
+            <button onclick="toggleChip(this)" class="chip border border-slate-200 px-4 py-2 rounded-full text-sm">Deep Focus</button>
+            <button onclick="toggleChip(this)" class="chip border border-slate-200 px-4 py-2 rounded-full text-sm">Collaboration</button>
+            <button onclick="toggleChip(this)" class="chip border border-slate-200 px-4 py-2 rounded-full text-sm">Prestige</button>
+            <button onclick="toggleChip(this)" class="chip border border-slate-200 px-4 py-2 rounded-full text-sm">Helping Others</button>
+            <button onclick="toggleChip(this)" class="chip border border-slate-200 px-4 py-2 rounded-full text-sm">Learning</button>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4">
+            <div>
+                <label class="font-medium">More...</label>
+                <input type="text" class="input-box" placeholder="Ownership">
+            </div>
+            <div>
+                <label class="font-medium">Less...</label>
+                <input type="text" class="input-box" placeholder="Client Fire-drills">
+            </div>
+        </div>
+
+        <label class="font-medium">If work felt “good enough,” my life outside of work would look like:</label>
+        <textarea class="input-box" rows="2" placeholder="I'd have the energy to cook dinner and go for a walk."></textarea>
+    </section>
+
+    <!-- Page 5: Confidence Reset -->
+    <section id="page5" class="page">
+        <h2 class="serif text-4xl mb-4">You’re Not Starting From Zero</h2>
+        <p class="text-slate-500 mb-8">We often devalue what comes easily to us. Let’s inventory your existing capital.</p>
+
+        <label class="font-medium">Things I know how to do that I’ve done for years:</label>
+        <textarea class="input-box" rows="2"></textarea>
+
+        <label class="font-medium">Skills people underestimate because they’re “normal” to me:</label>
+        <input type="text" class="input-box" placeholder="e.g. Synthesizing complex data into simple decks">
+
+        <label class="font-medium">People already trust me with:</label>
+        <input type="text" class="input-box" placeholder="e.g. Navigating difficult internal politics">
+    </section>
+
+    <!-- Page 6: Directions -->
+    <section id="page6" class="page">
+        <h2 class="serif text-4xl mb-8">4 Directions Worth Exploring</h2>
+        
+        <div class="grid md:grid-cols-2 gap-6 mb-8">
+            <div class="p-6 border border-slate-200 rounded-xl hover:border-indigo-200 transition-colors">
+                <h3 class="font-bold text-indigo-600 mb-2">1. Same Skill, New Scene</h3>
+                <p class="text-sm text-slate-500">Doing exactly what you do now, but for a company whose mission you actually care about.</p>
+            </div>
+            <div class="p-6 border border-slate-200 rounded-xl hover:border-indigo-200 transition-colors">
+                <h3 class="font-bold text-indigo-600 mb-2">2. Adjacent Skill, New Context</h3>
+                <p class="text-sm text-slate-500">Moving from Sales to Customer Success, or Marketing to Product Analysis.</p>
+            </div>
+            <div class="p-6 border border-slate-200 rounded-xl hover:border-indigo-200 transition-colors">
+                <h3 class="font-bold text-indigo-600 mb-2">3. Reduced Scope</h3>
+                <p class="text-sm text-slate-500">Stepping back from management or high-stress roles to regain time and mental health.</p>
+            </div>
+            <div class="p-6 border border-slate-200 rounded-xl hover:border-indigo-200 transition-colors">
+                <h3 class="font-bold text-indigo-600 mb-2">4. The Hybrid Path</h3>
+                <p class="text-sm text-slate-500">Consulting or freelancing part-time while you pilot a completely new industry.</p>
+            </div>
+        </div>
+
+        <label class="font-medium">Which 2 feel worth learning more about?</label>
+        <input type="text" class="input-box" placeholder="1 and 4...">
+    </section>
+
+    <!-- Page 7: Low Risk Steps -->
+    <section id="page7" class="page">
+        <h2 class="serif text-4xl mb-4">Low-Risk Next Steps</h2>
+        <p class="text-slate-500 mb-8">Action kills anxiety. Choose one small thing you can do this week.</p>
+
+        <div class="space-y-6">
+            <div class="flex items-start gap-4">
+                <div class="w-8 h-8 rounded bg-indigo-100 flex-shrink-0 flex items-center justify-center font-bold text-indigo-600">1</div>
+                <div class="w-full">
+                    <label class="block text-sm font-semibold mb-1 uppercase tracking-wider text-slate-400">One Conversation</label>
+                    <input type="text" class="input-box !mt-0" placeholder="Ask [Name] how they transitioned into [Field]...">
+                </div>
+            </div>
+            <div class="flex items-start gap-4">
+                <div class="w-8 h-8 rounded bg-indigo-100 flex-shrink-0 flex items-center justify-center font-bold text-indigo-600">2</div>
+                <div class="w-full">
+                    <label class="block text-sm font-semibold mb-1 uppercase tracking-wider text-slate-400">One Research Task</label>
+                    <input type="text" class="input-box !mt-0" placeholder="Look up the average salary for [Role]...">
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-8 p-6 bg-slate-900 text-white rounded-xl flex items-center gap-4">
+            <svg class="w-8 h-8 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+            <p class="text-sm">“None of these require quitting or committing. They are just data points.”</p>
+        </div>
+    </section>
+
+    <!-- Page 8: Reflection (Bridging Section) -->
+    <section id="page8" class="page">
+        <div class="mb-6">
+            <span class="text-indigo-600 font-bold tracking-widest text-sm uppercase">The Final Review</span>
+        </div>
+        <h2 class="serif text-4xl mb-4">Where You Are Now</h2>
+        <p class="text-slate-500 mb-8 leading-relaxed">
+            Take a moment to scroll back through your entries. Look at what you've labeled as draining, the values you circled, and the skills you identified. 
+            <br><br>
+            As you synthesize those previous answers, use this final set of questions to ground your progress.
+        </p>
+        
+        <label class="font-medium">After reviewing my answers, what I’m clearer on now:</label>
+        <textarea class="input-box" rows="2" placeholder="e.g. I realize I don't hate the work, I just hate the lack of autonomy..."></textarea>
+
+        <label class="font-medium">Looking back at my skills and directions, what surprised me most:</label>
+        <textarea class="input-box" rows="2"></textarea>
+
+        <label class="font-medium">As I finish this workbook, what feels lighter in my mind:</label>
+        <input type="text" class="input-box" placeholder="e.g. Knowing I don't have to quit my job tomorrow to find a path.">
+    </section>
+
+    <!-- Page 9: Normalizing -->
+    <section id="page9" class="page">
+        <div class="max-w-md mx-auto text-center">
+            <h2 class="serif text-4xl mb-6">Why This Still Feels Hard</h2>
+            <div class="space-y-4 text-slate-600 text-lg leading-relaxed">
+                <p>You might still feel a knot in your stomach. That's normal. Career changes aren't just about jobs—they are <strong>identity shifts</strong>.</p>
+                <p>The fear of wasted time and the habit of overthinking are your brain's way of trying to keep you safe.</p>
+                <p class="font-semibold text-slate-900 mt-8">Clarity usually comes in stages — not all at once.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Page 10: Compilation & Lead Gen -->
+    <section id="page10" class="page text-center">
+        <div class="bg-white border-2 border-indigo-100 p-8 md:p-12 rounded-3xl shadow-xl shadow-indigo-50/50">
+            <div class="mb-6 inline-flex p-3 bg-indigo-50 rounded-2xl">
+                <svg class="w-8 h-8 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                </svg>
+            </div>
+            <h2 class="serif text-4xl mb-4">Your Next Chapter Starts Here</h2>
+            <p class="text-slate-500 mb-8 max-w-sm mx-auto leading-relaxed">
+                You've done the hard work. Enter your email below to receive a <strong>customized summary</strong> of your responses, along with your selected next steps and a transition roadmap.
+            </p>
+            
+            <div id="cta-form" class="max-w-md mx-auto space-y-4">
+                <input type="email" id="user-email" class="input-box text-center !mb-0 text-lg" placeholder="your@email.com" required>
+                
+                <button onclick="handleSubmit(this)" class="w-full bg-indigo-600 text-white py-4 rounded-xl font-bold text-lg hover:bg-indigo-700 transition-all transform hover:scale-[1.02] flex items-center justify-center gap-2">
+                    <span>Compile & Email My Summary</span>
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                </button>
+                
+                <div class="mt-6 flex items-start gap-3 text-left">
+                    <input type="checkbox" id="consent" class="mt-1 accent-indigo-600" checked>
+                    <label for="consent" class="text-xs text-slate-400 leading-normal">
+                        By clicking above, you'll receive your workbook summary and consent to join my mailing list for weekly career transition insights. Unsubscribe anytime.
+                    </label>
+                </div>
+            </div>
+
+            <!-- Success State (Hidden) -->
+            <div id="success-state" class="hidden py-8">
+                <div class="mb-4 inline-flex p-3 bg-green-50 rounded-full">
+                    <svg class="w-8 h-8 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                </div>
+                <h3 class="text-2xl font-bold mb-2">Check your inbox!</h3>
+                <p class="text-slate-500">Your summary is being compiled and will arrive in a few minutes.</p>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        let activePage = 1;
+        const totalPages = 10;
+
+        function toggleChip(el) {
+            el.classList.toggle('active');
+        }
+
+        function navNext() {
+            if (activePage < totalPages) {
+                activePage++;
+                scrollToActivePage();
+            }
+        }
+
+        function navPrevious() {
+            if (activePage > 1) {
+                activePage--;
+                scrollToActivePage();
+            }
+        }
+
+        function scrollToActivePage() {
+            const target = document.getElementById(`page${activePage}`);
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth' });
+            }
+            updatePageIndicator();
+        }
+
+        function updatePageIndicator() {
+            document.getElementById('currentPageNum').innerText = activePage;
+            
+            // Hide nav dock on first page, show on others
+            const navDock = document.getElementById('navDock');
+            if (activePage === 1) {
+                navDock.classList.add('opacity-0', 'pointer-events-none');
+            } else {
+                navDock.classList.remove('opacity-0', 'pointer-events-none');
+            }
+
+            // Disable "Next" button logic on final page
+            const nextBtn = document.getElementById('nextBtn');
+            if (activePage === totalPages) {
+                nextBtn.classList.add('opacity-0', 'pointer-events-none');
+            } else {
+                nextBtn.classList.remove('opacity-0', 'pointer-events-none');
+            }
+        }
+
+        function handleSubmit(btn) {
+            const email = document.getElementById('user-email').value;
+            const consent = document.getElementById('consent').checked;
+            
+            if (!email || !email.includes('@')) {
+                alert('Please enter a valid email address.');
+                return;
+            }
+            
+            if (!consent) {
+                alert('Please agree to receive the summary.');
+                return;
+            }
+
+            // Simulate loading
+            btn.innerHTML = '<span>Processing...</span>';
+            btn.disabled = true;
+
+            setTimeout(() => {
+                document.getElementById('cta-form').classList.add('hidden');
+                document.getElementById('success-state').classList.remove('hidden');
+            }, 1500);
+        }
+
+        // Handle Scroll Observer to update page number based on actual scroll position
+        const observerOptions = {
+            root: null,
+            threshold: 0.5
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const pageNum = parseInt(entry.target.id.replace('page', ''));
+                    activePage = pageNum;
+                    updatePageIndicator();
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('section.page').forEach(section => {
+            observer.observe(section);
+        });
+
+        // Top progress bar logic
+        window.addEventListener('scroll', () => {
+            const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+            const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrolled = (winScroll / height) * 100;
+            document.getElementById("progress").style.width = scrolled + "%";
+        });
+    </script>
+</body>
+</html>
