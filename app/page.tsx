@@ -92,20 +92,11 @@ export default function Workbook() {
     const emailInput = document.getElementById(
       "user-email"
     ) as HTMLInputElement | null
-    const consentInput = document.getElementById(
-      "consent"
-    ) as HTMLInputElement | null
 
     const email = emailInput?.value || ""
-    const consent = consentInput?.checked ?? false
 
     if (!email || !email.includes("@")) {
       alert("Please enter a valid email address.")
-      return
-    }
-
-    if (!consent) {
-      alert("Please agree to receive the summary.")
       return
     }
 
@@ -607,22 +598,11 @@ export default function Workbook() {
                 {!submitting && <ArrowRight className="w-5 h-5" />}
               </button>
 
-              <div className="mt-6 flex items-start gap-3 text-left">
-                <input
-                  type="checkbox"
-                  id="consent"
-                  className="mt-1 accent-accent"
-                  defaultChecked
-                />
-                <label
-                  htmlFor="consent"
-                  className="text-xs text-muted-foreground leading-normal"
-                >
-                  By clicking above, you{"'"}ll receive your workbook summary
-                  and consent to join my mailing list for weekly career
-                  transition insights. Unsubscribe anytime.
-                </label>
-              </div>
+              <p className="mt-6 text-xs text-muted-foreground leading-normal">
+                By submitting your email, you{"'"}ll receive your workbook
+                summary and consent to join a mailing list. Unsubscribe
+                anytime.
+              </p>
             </div>
           ) : (
             <div className="py-8">
