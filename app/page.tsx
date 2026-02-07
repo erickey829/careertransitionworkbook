@@ -131,7 +131,7 @@ export default function Workbook() {
       {/* Floating Navigation Dock */}
       <nav
         className={`nav-dock no-print transition-opacity duration-500 ${
-          activePage === 1
+          activePage === 1 || activePage === 10
             ? "opacity-0 pointer-events-none"
             : "opacity-100"
         }`}
