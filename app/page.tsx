@@ -119,7 +119,7 @@ export default function Workbook() {
   ]
 
   return (
-    <>
+    <div suppressHydrationWarning>
       {/* Progress Bar */}
       <div className="fixed top-0 left-0 w-full h-1.5 bg-secondary z-50">
         <div
@@ -620,6 +620,6 @@ export default function Workbook() {
           )}
         </div>
       </section>
-    </>
+    </div>
   )
 }
